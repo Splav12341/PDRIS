@@ -1,0 +1,3 @@
+в папке task1 запуск программы: ansible-playbook task1.yml
+
+в папке task2 запуск программы: ansible-playbook task2.yml

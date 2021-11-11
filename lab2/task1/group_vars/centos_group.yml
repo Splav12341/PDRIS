@@ -1,0 +1,6 @@
+---
+ansible_ssh_user: "mftiedu"
+ansible_ssh_pass: "cHONtic"
+ansible_sudo_pass: "cHONtic"
+log_path: "/home/mftiedu/log/"
+...
