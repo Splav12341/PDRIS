@@ -1,0 +1,57 @@
+---
+
+- name: Setup NGINX
+  hosts: all
+  remote_user: user1
+  become: yes
+
+  tasks:
+    - name: Ping servers
+      ping:
+
+    - block: # for Debian       
+      - name: "apt-get update for Debian"
+        apt:
+          update_cache: yes
+
+      - name: install NGINX for debian
+        apt:
+          name: nginx
+          state: latest
+      when: ansible_os_family=="Debian"
+
+    - block: # for Centos
+      - name: "apt-get update for centOS"
+        package: update_cache=yes
+
+      - name: install nginx for centos  
+        package: name=nginx state=latest
+      when: ansible_os_family=="RedHat"
+
+    - name: Nginx start
+      become: yes
+      service: name=nginx state=started
+
+    - name: Nginx restart
+      become: yes
+      service: name=nginx state=restarted
+     
+    - name: Nginx reload
+      become: yes
+      service: name=nginx state=reloaded
+
+    - name: show_server_info_Debian
+      shell: curl 194.87.107.68
+      register: info_1
+      when: ansible_os_family=="Debian"
+    
+    - name: show_server_info_centOS
+      shell: curl 194.87.57.31
+      register: info_2
+      when: ansible_os_family=="RedHat"
+
+    - name: Print info1
+      debug: var=info_1
+
+    - name: Print info2
+      debug: var=info_2

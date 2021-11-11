@@ -1,0 +1,43 @@
+---
+
+- name: setup my script
+  hosts: all
+  remote_user: user1
+  become: yes
+
+  tasks:
+    - name: Ping servers
+      ping:
+
+    - name: "apt-get update for Debian"
+      apt:
+        update_cache: yes
+      when: ansible_os_family=="Debian"
+
+    - name: "apt-get update for centOS"
+      package: update_cache=yes
+      when: ansible_os_family=="RedHat"
+
+    - name: Copy requirements.txt
+      copy: src=./requirements.txt dest=./mz/
+
+    - name: install requirements for Debian
+      shell: pip3 install -q -r ./mz/requirements.txt && apt-get -q update
+      when: ansible_os_family=="Debian"
+
+    - name: install requirements for Centos
+      shell: /usr/local/bin/pip3 install -q -r ./mz/requirements.txt
+      when: ansible_os_family=="RedHat"
+
+    - name: copy main.py
+      copy: src=./main.py dest=./mz/
+
+    - name: run main.py
+      shell: sudo python3 ./mz/main.py
+
+    - name: saving result
+      shell: cat ./mz/text.txt
+      register: answer
+
+    - name: Print answer
+      debug: var=answer
